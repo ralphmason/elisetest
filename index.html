@@ -144,6 +144,8 @@
 
         function next_question() {
 
+            $('#answer').unbind();
+
             if (questions == 0) {
                 $('#start').show();
                 $('#answer').hide();
@@ -163,7 +165,7 @@
             test[lhs][rhs] = true;
 
             $('#question').text(`${lhs} X ${rhs}`);
-            $('#result').text(`Question# ${questions}`);
+            $('#result').text(`${questions} questions to go!`);
 
             questions--;
 
@@ -214,7 +216,8 @@
             $('#answer').keyup(x => {
                 var ans = parseInt($('#answer').val());
                 console.log(ans);
-                console.log(this.value)
+                console.log(answer);
+
                 if (ans == answer) {
                     $('#answer').change(null);
                     $('#answer').css({
