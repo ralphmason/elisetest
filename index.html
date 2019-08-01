@@ -1,0 +1,331 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="apple-touch-icon" href="icon.png">
+    <!-- Place favicon.ico in the root directory -->
+
+
+    <meta name="theme-color" content="#fafafa">
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: url('white-math-page-paper-texture.jpg');
+            background-repeat: no-repeat;
+
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 0.3fr 1.5fr .1fr;
+            grid-template-rows: 0.5 1.4fr .1fr;
+            grid-template-areas: "Banner Banner Banner"". Title ."". TestArea ."". . .";
+            font-family: Arial, Helvetica, sans-serif;
+            z-index: 1;
+        }
+
+        .Title {
+            grid-area: Title;
+        }
+
+        .Banner {
+            grid-area: Banner;
+        }
+
+        .TestArea {
+            grid-area: TestArea;
+        }
+
+        input[type="text"] {
+            font-size: 50px;
+            font-weight: 900;
+            background: rgba(0, 35, 151, 0.3);
+            width: 150px;
+
+        }
+
+        input:focus {
+            background-color: rgba(46, 182, 76, 0)
+        }
+
+
+
+        button {
+            font-size: 25px;
+            background-color: cornflowerblue;
+            border-radius: 5px;
+            border-color: darkslategrey;
+
+        }
+
+        .h1 {
+            align-content: center;
+        }
+
+        canvas {
+            position: fixed;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id='myCanvas' width=800 height=800></canvas>
+
+    <!-- Add your site or application content here -->
+
+    <div class="grid-container">
+        <div class="Title"></div>
+        <div class="Banner"></div>
+        <div class="TestArea">
+            <h1></h1>
+            <h1>Multiplication Test</h1>
+
+            <h2 id='question'></h2>
+            <div><input type="text" id='answer'></input></div>
+            <button id='start'>Start Test</button>
+            <h2 id='result'></h2>
+            <h2 id='timer'></h2>
+
+        </div>
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script>
+        window.jQuery || document.write('<script src="js/vendor/jquery-3.4.1.min.js"><\/script>')
+    </script>
+
+
+
+
+    <script>
+        const TIME_PER_QUESTION = 10;
+        const QUESTIONS = 5;
+
+        var test = [];
+        var questions = 0;
+
+
+        function init() {
+            test = [...Array(12)].map(x => Array(13).fill(false));
+            questions = 20;
+
+            test[1] = test[10] = test[11] = Array(12).fill(true);
+        }
+        $('#answer').hide();
+
+        $('#start').click(x => {
+            init();
+            $('#start').hide();
+            $('#answer').show();
+            questions = QUESTIONS;
+            stop_fireworks();
+            next_question();
+
+
+        });
+
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min)) +
+                min; //The maximum is exclusive and the minimum is inclusive
+        }
+
+        function next_question() {
+
+            if (questions == 0) {
+                $('#start').show();
+                $('#answer').hide();
+                $('#result').text('😃😃😃 Congratulations - you passed 😃😃😃');
+                stopTimer();
+                start_fireworks();
+                return;
+            }
+
+            var lhs = getRandomInt(1, 12);
+            var rhs = getRandomInt(1, 12);
+
+            if (test[lhs][rhs] || test[rhs][lhs]) {
+                return next_question();
+            }
+
+            test[lhs][rhs] = true;
+
+            $('#question').text(`${lhs} X ${rhs}`);
+            $('#result').text(`Question# ${questions}`);
+
+            questions--;
+
+            start_timer(lhs * rhs);
+        }
+
+        var timeout;
+
+        function stopTimer() {
+            if (timeout) {
+                clearInterval(timeout);
+                tiimeout = null;
+            }
+        }
+
+
+        function start_timer(answer) {
+
+            stopTimer();
+
+            var time = TIME_PER_QUESTION;
+            $('#timer').text(`${time}`);
+
+            timeout = setInterval(x => {
+
+                time--;
+
+                if (time == 0) {
+                    $('#start').show();
+
+                    $('#timer').text(``);
+
+                    $('#question').text(`${$('#question').text()} =  ${answer}`);
+
+                    $('#answer').hide();
+                    $('#result').text('🤨🤨🤨 too slow, try again 🤨🤨🤨');
+                    $('#tier').text('');
+                    stopTimer();
+                    return;
+                }
+
+                $('#timer').text(`${time}`);
+
+            }, 1000);
+
+            $('#answer').val('');
+            $('#answer').focus();
+            $('#answer').keyup(x => {
+                var ans = parseInt($('#answer').val());
+                console.log(ans);
+                console.log(this.value)
+                if (ans == answer) {
+                    $('#answer').change(null);
+                    $('#answer').css({
+                        opacity: 0
+                    });
+                    $('#answer').animate({
+                        opacity: 1
+                    }, 700);
+
+                    return next_question();
+                }
+            });
+
+
+        }
+
+
+        const max_fireworks = 5,
+            max_sparks = 50;
+        let canvas = document.getElementById('myCanvas');
+        let context = canvas.getContext('2d');
+        let fireworks = [];
+
+        for (let i = 0; i < max_fireworks; i++) {
+            let firework = {
+                sparks: []
+            };
+            for (let n = 0; n < max_sparks; n++) {
+                let
+                    spark = {
+                        vx: Math.random() * 5 + .5,
+                        vy: Math.random() * 5 + .5,
+                        weight: Math.random() * .3 + .03,
+                        red: Math.floor(Math.random() * 2),
+                        green: Math.floor(Math.random() * 2),
+                        blue: Math.floor(Math.random() * 2)
+                    };
+                if (Math.random() > .5) spark.vx = -spark.vx;
+                if (Math.random() > .5) spark.vy = -spark.vy;
+                firework.sparks.push(spark);
+            }
+            fireworks.push(firework);
+            resetFirework(firework);
+        }
+
+        function resetFirework(firework) {
+            firework.x = Math.floor(Math.random() * canvas.width);
+            firework.y = canvas.height;
+            firework.age = 0;
+            firework.phase = 'fly';
+        }
+        var frame = 0;
+
+        function explode() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            fireworks.forEach((firework, index) => {
+                if (firework.phase == 'explode') {
+                    firework.sparks.forEach((spark) => {
+                        for (let i = 0; i < 10; i++) {
+                            let trailAge = firework.age + i;
+                            let x = firework.x + spark.vx * trailAge;
+                            let
+                                y = firework.y + spark.vy * trailAge + spark.weight * trailAge * spark
+                                .weight * trailAge;
+                            let fade = i * 20 -
+                                firework.age * 2;
+                            let r = Math.floor(spark.red * fade);
+                            let g = Math.floor(spark.green * fade);
+                            let
+                                b = Math.floor(spark.blue * fade);
+                            context.beginPath();
+                            context.fillStyle = 'rgba(' + r + ',' + g + ',' + b +
+                                ',1)';
+                            context.rect(x, y, 4, 4);
+                            context.fill();
+                        }
+                    });
+                    firework.age++;
+                    if (firework.age > 100 &&
+                        Math.random() < .05) {
+                        resetFirework(firework);
+                    }
+                } else {
+                    firework.y = firework.y - 10;
+                    for (let spark = 0; spark < 15; spark++) {
+                        context.beginPath();
+                        context.fillStyle = 'rgba(' + index * 50 + ',' + spark *
+                            17 + ',0,1)';
+                        context.rect(firework.x + Math.random() * spark - spark / 2, firework.y + spark * 4,
+                            4, 4);
+                        context.fill();
+                    }
+                    if (Math.random() < .001 || firework.y < 200) firework.phase = 'explode';
+                }
+            });
+            frame = window.requestAnimationFrame(explode);
+
+
+        }
+
+        function start_fireworks() {
+            explode();
+        }
+
+        function stop_fireworks() {
+            window.cancelAnimationFrame(frame);
+            frame = 0;
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+
+</body>
+
+</html>
