@@ -76,6 +76,7 @@
 
         #timer {
             font-size: 50px;
+            margin: 0px;
         }
     </style>
 </head>
@@ -96,7 +97,7 @@
             <div><input type="text" id='answer' pattern='\d*'></input></div>
             <button id='start'>Start Test</button>
             <h2 id='result'></h2>
-            <h2 id='timer'></h2>
+            <p id='timer'></p>
 
         </div>
     </div>
@@ -118,6 +119,7 @@
 
         var test = [];
         var questions = 0;
+        var start_time;
 
 
         function init() {
@@ -133,6 +135,7 @@
             $('#start').hide();
             $('#answer').show();
             questions = QUESTIONS;
+            start_time = new Date();
             stop_fireworks();
             next_question();
 
@@ -155,6 +158,10 @@
                 $('#answer').hide();
                 $('#timer').text(``);
                 $('#result').text('😃😃😃 Congratulations - you passed 😃😃😃');
+                var elapsed = (new Date()) - start_time;
+                $('#timer').text(`Average ${(elapsed/1000/QUESTIONS).toFixed(1)}s per answer`);
+
+
                 stopTimer();
                 start_fireworks();
                 return;
