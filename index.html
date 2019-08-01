@@ -73,6 +73,10 @@
             position: fixed;
             z-index: -1;
         }
+
+        #timer {
+            font-size: 50px;
+        }
     </style>
 </head>
 
@@ -89,7 +93,7 @@
             <h1>Multiplication Test</h1>
 
             <h2 id='question'></h2>
-            <div><input type="text" id='answer'></input></div>
+            <div><input type="text" id='answer' pattern='\d*'></input></div>
             <button id='start'>Start Test</button>
             <h2 id='result'></h2>
             <h2 id='timer'></h2>
@@ -149,6 +153,7 @@
             if (questions == 0) {
                 $('#start').show();
                 $('#answer').hide();
+                $('#timer').text(``);
                 $('#result').text('😃😃😃 Congratulations - you passed 😃😃😃');
                 stopTimer();
                 start_fireworks();
