@@ -167,8 +167,8 @@
                 return;
             }
 
-            var lhs = getRandomInt(1, 12);
-            var rhs = getRandomInt(1, 12);
+            var lhs = getRandomInt(2, 12);
+            var rhs = getRandomInt(2, 12);
 
             if (test[lhs][rhs] || test[rhs][lhs]) {
                 return next_question();
@@ -242,10 +242,7 @@
                     return next_question();
                 }
             });
-
-
         }
-
 
         const max_fireworks = 5,
             max_sparks = 50;
@@ -326,8 +323,6 @@
                 }
             });
             frame = window.requestAnimationFrame(explode);
-
-
         }
 
         function start_fireworks() {
