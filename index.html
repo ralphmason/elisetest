@@ -123,10 +123,10 @@
 
 
         function init() {
-            test = [...Array(12)].map(x => Array(13).fill(false));
+            test = [...Array(13)].map(x => Array(13).fill(false));
             questions = 20;
 
-            test[1] = test[10] = test[11] = Array(12).fill(true);
+            test[1] = test[10] = test[11] = Array(13).fill(true);
         }
         $('#answer').hide();
 
@@ -167,8 +167,8 @@
                 return;
             }
 
-            var lhs = getRandomInt(2, 12);
-            var rhs = getRandomInt(2, 12);
+            var lhs = getRandomInt(2, 13);
+            var rhs = getRandomInt(2, 13);
 
             if (test[lhs][rhs] || test[rhs][lhs]) {
                 return next_question();
